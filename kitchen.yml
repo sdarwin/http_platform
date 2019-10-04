@@ -1,9 +1,10 @@
 ---
 driver:
   name: ec2
-  region: us-west-1
+  region: eu-central-1
   instance_type: t2.micro
-  security_group_ids: ['kitchen_test_sg']
+  aws_ssh_key_id: frankfurtkeypair
+  security_group_ids: ['open']
   tags:
     Name: HTTP Platform
     Service: Infrastructure
@@ -11,6 +12,7 @@ driver:
     Fund: 103010
     Org: 60412
     Department: Systems Engineering
+  transport.ssh_key: /root/.ssh/id_rsa
 
 provisioner:
   name: chef_zero
@@ -72,29 +74,31 @@ verifier:
 
 platforms:
   - name: ubuntu-18.04
-  - name: ubuntu-16.04
-  - name: ubuntu-14.04
-  - name: debian-9
+#  - name: ubuntu-16.04
+#  - name: ubuntu-14.04
+#  - name: debian-9
   - name: centos-7
-  - name: centos-6
-  - name: oracle-7.6
-  - name: oracle-6.10
-  - name: fedora-29
-  - name: fedora-28
-  - name: amazon2
-  - name: amazon2-2018
-  - name: sles-15
-  - name: windows-2019
-    driver:
-      image_id: ami-004a782f694e8dde2
-  - name: windows-2016
-  - name: windows-2012r2
-  - name: windows-2008r2sp1
+#    driver:
+#      transport.username: centos
+#  - name: centos-6
+#  - name: oracle-7.6
+#  - name: oracle-6.10
+#  - name: fedora-29
+#  - name: fedora-28
+#  - name: amazon2
+#  - name: amazon2-2018
+#  - name: sles-15
+#  - name: windows-2019
+#    driver:
+#      image_id: ami-004a782f694e8dde2
+#  - name: windows-2016
+#  - name: windows-2012r2
+#  - name: windows-2008r2sp1
 
 suites:
   - name: self
     run_list:
-      - recipe[se-nix-baseline::default]
+      #- recipe[se-nix-baseline::default]
       - recipe[http_platform::default]
     data_bags_path: 'test/integration/data_bags'
     verifier:
@@ -103,39 +107,39 @@ suites:
         - test/integration/self_signed_cert
     attributes:
     includes:
-      - ubuntu-18.04
-      - ubuntu-16.04
-      - debian-9
+      #- ubuntu-18.04
+      #- ubuntu-16.04
+      #- debian-9
       - centos-7
-      - oracle-7.6
-      - oracle-6.10
-  - name: vault
-    run_list:
-      - recipe[se-nix-baseline::default]
-      - recipe[http_platform::default]
-    data_bags_path: 'test/integration/data_bags'
-    verifier:
-      inspec_tests:
-        - test/integration/default
-        - test/integration/vault_cert
-    attributes:
-      http_platform:
-        configure_vault_cert: true
-        key:
-          vault_item_key: 'key'
-    includes:
-      - ubuntu-18.04
-      - ubuntu-16.04
-      - debian-9
-      - centos-7
-      - oracle-7.6
-      - oracle-6.10
-  # This is impossible to do in kitchen unless DNS is configured for a kitchen instance
-  # https://community.letsencrypt.org/t/certificate-for-public-ip-without-domain-name/6082
-  # This is a list of platforms that have been tested elsewhere
+      #- oracle-7.6
+      #- oracle-6.10
+ #  - name: vault
+ #    run_list:
+ #      #- recipe[se-nix-baseline::default]
+ #      - recipe[http_platform::default]
+ #    data_bags_path: 'test/integration/data_bags'
+ #    verifier:
+ #      inspec_tests:
+ #        - test/integration/default
+ #        - test/integration/vault_cert
+ #    attributes:
+ #      http_platform:
+ #        configure_vault_cert: true
+ #        key:
+ #          vault_item_key: 'key'
+ #    includes:
+ #      #- ubuntu-18.04
+ #      #- ubuntu-16.04
+ #      #- debian-9
+ #      - centos-7
+ #      #- oracle-7.6
+ #      #- oracle-6.10
+ #  # This is impossible to do in kitchen unless DNS is configured for a kitchen instance
+ #  # https://community.letsencrypt.org/t/certificate-for-public-ip-without-domain-name/6082
+ #  # This is a list of platforms that have been tested elsewhere
   - name: certbot
     run_list:
-      - recipe[se-nix-baseline::default]
+      #- recipe[se-nix-baseline::default]
       - recipe[http_platform::default]
     data_bags_path: 'test/integration/data_bags'
     verifier:
@@ -148,5 +152,5 @@ suites:
         cert:
           kitchen_test: true
     includes:
-      - ubuntu-18.04
+      #- ubuntu-18.04
       - centos-7
